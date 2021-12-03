@@ -129,7 +129,8 @@ public class TelaInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-     
+        TelaJogo telaJogo = new TelaJogo();
+        telaJogo.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btMenuSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btMenuSobreActionPerformed
