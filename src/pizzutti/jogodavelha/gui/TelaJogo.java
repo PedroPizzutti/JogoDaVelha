@@ -16,16 +16,14 @@ import javax.swing.JOptionPane;
 public class TelaJogo extends javax.swing.JFrame {
     
     int qtdRodadas;
-    int resultado;
     int player = 1;
-    int maquina = 2;
-    int jogador;
+    int maquina = -1;
     int coordenadaX;
     int coordenadaY;
     boolean isVencedor;
     boolean acabou;
-    int [][] tabuleiro = new int[3][3];
-    JButton [] botao = new JButton[9];
+    int [][] tabuleiro;
+    JButton [] botao;
     /**
      * Creates new form TelaJogo
      */
@@ -62,6 +60,7 @@ public class TelaJogo extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Jogo da Velha");
         setBackground(new java.awt.Color(0, 255, 51));
+        setForeground(java.awt.Color.magenta);
 
         bt3.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
         bt3.setFocusable(false);
@@ -284,44 +283,8 @@ public class TelaJogo extends javax.swing.JFrame {
     }//GEN-LAST:event_btMenuNovoJogoActionPerformed
 
     private void btMenuSairJogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btMenuSairJogoActionPerformed
-        System.exit(0);
+        this.dispose();
     }//GEN-LAST:event_btMenuSairJogoActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaJogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaJogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaJogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaJogo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TelaJogo().setVisible(true);
-            }
-        });
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt1;
     private javax.swing.JButton bt2;
@@ -342,11 +305,12 @@ public class TelaJogo extends javax.swing.JFrame {
 
     public void iniciarJogo(){
         
-        jogador = player;
+        tabuleiro = new int[3][3];
         isVencedor = false;
         acabou = false;
         qtdRodadas = 0;
         lblResultado.setText("Player(X) VS Computador(O)");
+        botao = new JButton[9];
         botao[0] = bt1;
         botao[1] = bt2;
         botao[2] = bt3;
@@ -360,25 +324,28 @@ public class TelaJogo extends javax.swing.JFrame {
     
     public void processarJogo(JButton bt, int x, int y){
         
-        tabuleiro[x][y] = player;
-        bt.setEnabled(false);
-        bt.setText("X");
-        isVencedor = checarVitoria(player);
-        if(isVencedor){
-            acabou = encerrarJogo();
-            lblResultado.setText("Parabéns, você venceu!");
-        }
-        qtdRodadas+= 1;
-        if(qtdRodadas == 5 && !acabou){
-        acabou = encerrarJogo();
-        lblResultado.setText("Ora ora, temos um empate!");
+        if(!acabou){
+            tabuleiro[x][y] = player;
+            bt.setEnabled(false);
+            bt.setText("X");
+            isVencedor = checarVitoria(player);
+            if(isVencedor){
+                acabou = encerrarJogo();
+                lblResultado.setText("Parabéns, você venceu!");
+            }
+        
+            qtdRodadas+= 1;
+            if(qtdRodadas == 5){
+                acabou = encerrarJogo();
+                lblResultado.setText("Ora ora, temos um empate!");
+            }
         }
         
         if (!acabou){
             escolherMaquina();
             isVencedor = checarVitoria(maquina);
             if(isVencedor){
-                encerrarJogo();
+                acabou = encerrarJogo();
                 lblResultado.setText("Que pena, você perdeu...");
             }
         }
@@ -386,82 +353,91 @@ public class TelaJogo extends javax.swing.JFrame {
     
     public boolean checarVitoria(int jogador){
         
+        isVencedor = false;
+        
         for(int i = 0; i < 3; i++){
             if(tabuleiro[i][0] == jogador && tabuleiro[i][1] == jogador && tabuleiro[i][2] == jogador){
-                return true;
+                isVencedor = true;
             }
             
             if(tabuleiro[0][i] == jogador && tabuleiro[1][i] == jogador && tabuleiro[2][i] == jogador){
-                return true;
+                isVencedor = true;
             }   
         }
         if(tabuleiro[0][0] == jogador && tabuleiro[1][1] == jogador && tabuleiro[2][2] == jogador){
-            return true;
+            isVencedor = true;
         }
         
         if(tabuleiro[0][2] == jogador && tabuleiro[1][1] == jogador && tabuleiro[2][0] == jogador){
-            return true;
+            isVencedor = true;
         }
-        return false;
+        
+        return isVencedor;
     }
     
     public boolean encerrarJogo(){
+        
+        acabou = true;
+ 
         for(int i = 0; i < 9; i++){
             botao[i].setEnabled(false);
         }
-        return true;
+        
+        return acabou;
     } 
     
     public void limparJogo(){
+        
         for(int i = 0; i < 9; i++){
             botao[i].setEnabled(true);
             botao[i].setText("");
         }
-        for(int x = 0; x < 3; x++){
-            for(int y = 0; y < 3; y++){
-                tabuleiro[x][y] = 0;
-            }
-        }
+        
         iniciarJogo();
     }
     
     public void escolherMaquina(){
+        
         Random random = new Random();
-        int escolhaMaquina = random.nextInt(8);
-        if("".equals(botao[escolhaMaquina+1].getText()) && botao[escolhaMaquina+1].getText() != null){
-            botao[escolhaMaquina+1].setEnabled(false);
-            botao[escolhaMaquina+1].setText("O");
-            switch(escolhaMaquina + 1){
-                case 1:
+        int escolhaMaquina = random.nextInt(9);
+        
+        if("".equals(botao[escolhaMaquina].getText()) && botao[escolhaMaquina].getText() != null){
+            
+            botao[escolhaMaquina].setEnabled(false);
+            botao[escolhaMaquina].setText("O");
+            
+            switch(escolhaMaquina){
+                case 0:
                     tabuleiro[0][0] = maquina;
                     break;
-                case 2:
+                case 1:
                     tabuleiro[0][1] = maquina;
                     break;
-                case 3:
+                case 2:
                     tabuleiro[0][2] = maquina;
                     break;
-                case 4:
+                case 3:
                     tabuleiro[1][0] = maquina;
                     break;
-                case 5:
+                case 4:
                     tabuleiro[1][1] = maquina;
                     break;
-                case 6:
+                case 5:
                     tabuleiro[1][2] = maquina;
                     break;
-                case 7:
+                case 6:
                     tabuleiro[2][0] = maquina;
                     break;
-                case 8:
+                case 7:
                     tabuleiro[2][1] = maquina;
                     break;
-                case 9:
+                case 8:
                     tabuleiro[2][2] = maquina;
                     break;
                 default:
                     JOptionPane.showMessageDialog(this, "Algo de errado com o programa.");
             }
+            
         } else {
             escolherMaquina();
         }    
