@@ -18,7 +18,7 @@ public class TelaJogo extends javax.swing.JFrame {
     int qtdRodadas;
     int resultado;
     int player = 1;
-    int maquina = -1;
+    int maquina = 2;
     int jogador;
     int coordenadaX;
     int coordenadaY;
@@ -26,7 +26,6 @@ public class TelaJogo extends javax.swing.JFrame {
     boolean acabou;
     int [][] tabuleiro = new int[3][3];
     JButton [] botao = new JButton[9];
-
     /**
      * Creates new form TelaJogo
      */
@@ -281,7 +280,7 @@ public class TelaJogo extends javax.swing.JFrame {
     }//GEN-LAST:event_bt9ActionPerformed
 
     private void btMenuNovoJogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btMenuNovoJogoActionPerformed
-        limparIniciarJogo();
+        limparJogo();
     }//GEN-LAST:event_btMenuNovoJogoActionPerformed
 
     private void btMenuSairJogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btMenuSairJogoActionPerformed
@@ -342,8 +341,12 @@ public class TelaJogo extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public void iniciarJogo(){
-        qtdRodadas = 0;
+        
         jogador = player;
+        isVencedor = false;
+        acabou = false;
+        qtdRodadas = 0;
+        lblResultado.setText("Player(X) VS Computador(O)");
         botao[0] = bt1;
         botao[1] = bt2;
         botao[2] = bt3;
@@ -357,35 +360,33 @@ public class TelaJogo extends javax.swing.JFrame {
     
     public void processarJogo(JButton bt, int x, int y){
         
-        if(jogador == player){
-            tabuleiro[x][y] = player;
-            bt.setEnabled(false);
-            bt.setText("X");
-            isVencedor = checarVitoria(player);
-            if(isVencedor){
-                acabou = encerrarJogo();
-                lblResultado.setText("Parabéns, você venceu!");
-            }
-            qtdRodadas++;
-            if(!acabou){
-                escolherMaquina();
-                isVencedor = checarVitoria(maquina);
-                if(isVencedor){
-                    lblResultado.setText("Que pena, você perdeu...");
-                    encerrarJogo();
-                    jogador = player;
-                    qtdRodadas++;
-                }
-            }        
+        tabuleiro[x][y] = player;
+        bt.setEnabled(false);
+        bt.setText("X");
+        isVencedor = checarVitoria(player);
+        if(isVencedor){
+            acabou = encerrarJogo();
+            lblResultado.setText("Parabéns, você venceu!");
         }
-        if(qtdRodadas == 9){
-            lblResultado.setText("Ora ora, temos um empate!");
+        qtdRodadas+= 1;
+        if(qtdRodadas == 5 && !acabou){
+        acabou = encerrarJogo();
+        lblResultado.setText("Ora ora, temos um empate!");
+        }
+        
+        if (!acabou){
+            escolherMaquina();
+            isVencedor = checarVitoria(maquina);
+            if(isVencedor){
+                encerrarJogo();
+                lblResultado.setText("Que pena, você perdeu...");
+            }
         }
     }
     
     public boolean checarVitoria(int jogador){
         
-        for(int i = 0; i < tabuleiro.length; i++){
+        for(int i = 0; i < 3; i++){
             if(tabuleiro[i][0] == jogador && tabuleiro[i][1] == jogador && tabuleiro[i][2] == jogador){
                 return true;
             }
@@ -409,20 +410,25 @@ public class TelaJogo extends javax.swing.JFrame {
             botao[i].setEnabled(false);
         }
         return true;
-    }
+    } 
     
-    public void limparIniciarJogo(){
+    public void limparJogo(){
         for(int i = 0; i < 9; i++){
             botao[i].setEnabled(true);
-            botao[i].setText(" ");
-            iniciarJogo();
+            botao[i].setText("");
         }
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                tabuleiro[x][y] = 0;
+            }
+        }
+        iniciarJogo();
     }
     
     public void escolherMaquina(){
         Random random = new Random();
         int escolhaMaquina = random.nextInt(8);
-        if(botao[escolhaMaquina+1].isEnabled()){
+        if("".equals(botao[escolhaMaquina+1].getText()) && botao[escolhaMaquina+1].getText() != null){
             botao[escolhaMaquina+1].setEnabled(false);
             botao[escolhaMaquina+1].setText("O");
             switch(escolhaMaquina + 1){
@@ -458,10 +464,6 @@ public class TelaJogo extends javax.swing.JFrame {
             }
         } else {
             escolherMaquina();
-        }
-        
-        
-        
-        
+        }    
     }
 }
