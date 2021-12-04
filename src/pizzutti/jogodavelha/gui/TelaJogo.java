@@ -329,13 +329,13 @@ public class TelaJogo extends javax.swing.JFrame {
             bt.setEnabled(false);
             bt.setText("X");
             isVencedor = checarVitoria(player);
-            if(isVencedor && !acabou){
+            if(isVencedor){
                 acabou = encerrarJogo();
                 lblResultado.setText("Parabéns, você venceu!");
             }
             qtdRodadas++;
             
-            if(qtdRodadas == 9){
+            if(qtdRodadas == 9 && !acabou){
                 acabou = encerrarJogo();
                 lblResultado.setText("Ora ora, temos um empate!");
             }
