@@ -333,9 +333,9 @@ public class TelaJogo extends javax.swing.JFrame {
                 acabou = encerrarJogo();
                 lblResultado.setText("Parabéns, você venceu!");
             }
-        
-            qtdRodadas+= 1;
-            if(qtdRodadas == 5){
+            qtdRodadas++;
+            
+            if(qtdRodadas == 9){
                 acabou = encerrarJogo();
                 lblResultado.setText("Ora ora, temos um empate!");
             }
@@ -348,6 +348,7 @@ public class TelaJogo extends javax.swing.JFrame {
                 acabou = encerrarJogo();
                 lblResultado.setText("Que pena, você perdeu...");
             }
+            qtdRodadas++;
         }
     }
     
